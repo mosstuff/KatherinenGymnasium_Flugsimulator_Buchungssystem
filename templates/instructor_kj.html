@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Time Slot Tracker</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  .containercontainer {
+    display: flex;
+    height: 50vh;
+   }
+  .top-half_1 {
+    background-color: #303446; /* Default background color */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    transition: background-color 0.5s ease;
+  }
+  .top-half_2 {
+    background-color: #303446; /* Default background color */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    transition: background-color 0.5s ease;
+  }
+  .bottom-half {
+    background-color: #303446; /* Default background color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    transition: background-color 0.5s ease;
+  }
+  #timer {
+    font-size: 78px;
+    color: #000000; /* Default text color */
+    transition: color 0.5s ease;
+  }
+  #name {
+    font-size: 60px;
+    color: #4C4F69; /* Default text color */
+    transition: color 0.5s ease;
+  }
+  #desc {
+    font-size: 50px;
+    color: #4C4F69; /* Default text color */
+    transition: color 0.5s ease;
+  }
+  #namel {
+    font-size: 60px;
+    color: #4C4F69; /* Default text color */
+    transition: color 0.5s ease;
+  }
+  #descl {
+    font-size: 50px;
+    color: #4C4F69; /* Default text color */
+    transition: color 0.5s ease;
+.break {
+  flex-basis: 100%;
+  height: 0.1;
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="containercontainer"><div class="top-half_1" id="nameContainer"><div class="break"></div><div id="name"></div><div class="break"></div><div id="desc"></div></div><div class="top-half_2" id="fnameContainer"><div class="break"></div><div id="namel"></div><div class="break"></div><div id="descl"></div></div></div>
+  <div class="bottom-half" id="timerContainer">
+    <span id="timer"></span>
+    </a>
+  </div>
+</div>
+<script>
+  // Function to fetch data from the API endpoint
+  function fetchDataRN() {
+    fetch('/get_next_time_slot?activity=Kampfjet')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Display name in the top half
+        document.getElementById('name').innerText = data.name;
+
+        if (data.ph_desc === undefined) {
+          document.getElementById('name').innerText = '';
+        } else {
+          document.getElementById('desc').innerText = data.ph_desc;
+        }
+
+        // Check status and set background color accordingly
+        if (data.status === 'Booked') {
+          document.querySelector('.top-half_1').style.backgroundColor = '#E4C78F'; // Booked color
+        } else if (data.status === 'Arrived') {
+          document.querySelector('.top-half_1').style.backgroundColor = '#A6D189'; // Arrived color
+        } else {
+          document.querySelector('.top-half_1').style.backgroundColor = '#E78284'; // Error color
+          document.getElementById('name').innerText = 'Ungebucht / ERROR';
+        }
+      });
+  }
+
+  function fetchDataLT() {
+    fetch('/get_next_next_time_slot?activity=Kampfjet')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Display name in the top half
+        document.getElementById('namel').innerText = data.name;
+
+        if (data.ph_desc === undefined) {
+          document.getElementById('namel').innerText = '';
+        } else {
+          document.getElementById('descl').innerText = data.ph_desc;
+        }
+
+        // Check status and set background color accordingly
+        if (data.status === 'Booked') {
+          document.querySelector('.top-half_2').style.backgroundColor = '#E4C78F'; // Booked color
+        } else if (data.status === 'Arrived') {
+          document.querySelector('.top-half_2').style.backgroundColor = '#A6D189'; // Arrived color
+        } else {
+          document.querySelector('.top-half_2').style.backgroundColor = '#E78284'; // Error color
+          document.getElementById('namel').innerText = 'Ungebucht / ERROR';
+        }
+      });
+  }
+
+  // Function to update timer
+  function updateTimer() {
+    const timerElement = document.getElementById('timer');
+    const currentTime = new Date();
+    const currentMinutes = currentTime.getMinutes();
+    const remainingSeconds = (10 - currentMinutes % 10) * 60 - currentTime.getSeconds();
+    const remainingMinutes = Math.floor(remainingSeconds / 60);
+    const formattedSeconds = remainingSeconds % 60;
+
+    timerElement.textContent = `${remainingMinutes.toString().padStart(2, '0')}:${formattedSeconds.toString().padStart(2, '0')}`;
+
+    // Change background color when timer is below 1 minute
+    if (remainingSeconds <= 60) {
+      document.querySelector('.bottom-half').style.backgroundColor = '#E78284'; // Timer below 1 minute color
+    } else {
+      document.querySelector('.bottom-half').style.backgroundColor = '#303446'; // Default color
+    }
+
+    // Change timer text color based on remaining time
+    if (remainingSeconds <= 60) {
+      timerElement.style.color = '#4C4F69'; // Timer below 1 minute text color
+    } else {
+      timerElement.style.color = '#C6D0F5'; // Default text color
+    }
+  }
+
+  // Initial fetch and update
+  fetchDataRN();
+  fetchDataLT();
+  updateTimer();
+
+  // Update timer every second
+  setInterval(() => {
+    updateTimer();
+    // Fetch data every minute to update the name and status
+    if (new Date().getSeconds() === 0) {
+      fetchDataRN();
+      fetchDataLT();
+    }
+  }, 1000);
+</script>
+</body>
+</html>

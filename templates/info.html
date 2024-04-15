@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Info</title>
+    <style>
+        /* CSS styles */
+        body {
+            background-color: #f0f0f0; /* Default background color */
+        }
+        .timeslot-list {
+            list-style-type: none; /* Remove dots from list items */
+            padding: 0;
+        }
+        .timeslot-list li {
+            margin-bottom: 5px;
+        }
+        .next-timeslot {
+            background-color: #ffff99; /* Background color for the next timeslot */
+            color: #000; /* Text color for the next timeslot */
+            font-weight: bold;
+            font-size: 20px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Next Available Timeslot</h1>
+
+    <!-- Next Timeslot Display -->
+    <ul class="timeslot-list" id="nextTimeslot">
+        <!-- Next available timeslot will be dynamically populated here -->
+    </ul>
+
+    <!-- JavaScript to populate the next available timeslot -->
+    <script>
+        // Function to fetch and display the next available timeslot
+        function populateNextTimeslot() {
+            fetch('/get_next_timeslot')
+                .then(response => response.json())
+                .then(data => {
+                    const nextTimeslot = data[0]; // Get the first (next) available timeslot
+                    const timeslotList = document.getElementById('nextTimeslot');
+                    timeslotList.innerHTML = ""; // Clear existing timeslot
+                    const listItem = document.createElement("li");
+                    listItem.textContent = `Next Available Timeslot: ${nextTimeslot}`;
+                    listItem.classList.add('next-timeslot');
+                    timeslotList.appendChild(listItem);
+                });
+        }
+
+        // Populate the next available timeslot initially
+        populateNextTimeslot();
+        // Refresh the next available timeslot every 15 seconds
+        setInterval(populateNextTimeslot, 15000);
+    </script>
+</body>
+</html>

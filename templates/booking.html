@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Booking</title>
+</head>
+<style>
+    .redirect-image {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        cursor: pointer;
+        z-index: 9999;
+        width: 250px; /* Adjust the width of the image */
+        height: auto; /* Maintain aspect ratio */
+    }
+</style>
+<body>
+    <h1>Booking</h1>
+    <form id="bookingForm" action="/booking" method="post">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name"><br>
+        <label for="name">Physical desc.:</label><br>
+        <input type="text" id="ph_desc" name="ph_desc"><br>
+        <label for="activity">Activity:</label><br>
+        <select id="activity" name="activity">
+            <option value="Kampfjet">Kampfjet</option>
+            <option value="Propeller">Propeller</option>
+        </select><br>
+        <label for="timeslot">Timeslot:</label><br>
+        <select id="timeslot" name="timeslot">
+            <!-- Timeslot options will be populated dynamically using JavaScript -->
+        </select><br>
+        <label for="qr_code">QR Code:</label><br>
+        <div id="reader" width="600px"></div>
+        <input type="text" id="qr_code" name="qr_code"><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <h2>Bookings</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Activity</th>
+                <th>Timeslot</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="bookingsTableBody">
+            <!-- Bookings will be dynamically populated here -->
+        </tbody>
+    </table>
+        <a href="/" class="redirect-link">
+    <img src="/logo.png" alt="Redirect Image" class="redirect-image">
+    </a>
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script>
+    // Function to populate timeslots based on selected activity
+    function populateTimeslots() {
+        var activity = document.getElementById("activity").value;
+        var timeslotSelect = document.getElementById("timeslot");
+        timeslotSelect.innerHTML = ""; // Clear existing options
+
+        // Define timeslots based on activity (you can customize this based on your actual timeslots)
+        var timeslots = {
+            "Kampfjet": ["17:00 - 17:10", "17:10 - 17:20", "17:20 - 17:30", "17:30 - 17:40", "17:40 - 17:50", "17:50 - 18:00", "18:00 - 18:10", "18:10 - 18:20", "18:20 - 18:30", "18:30 - 18:40", "18:40 - 18:50", "18:50 - 19:00", "19:00 - 19:10", "19:10 - 19:20", "19:20 - 19:30", "19:30 - 19:40", "19:40 - 19:50", "19:50 - 20:00"], // Example timeslots for Activity 1
+            "Propeller": ["17:00 - 17:10", "17:10 - 17:20", "17:20 - 17:30", "17:30 - 17:40", "17:40 - 17:50", "17:50 - 18:00", "18:00 - 18:10", "18:10 - 18:20", "18:20 - 18:30", "18:30 - 18:40", "18:40 - 18:50", "18:50 - 19:00", "19:00 - 19:10", "19:10 - 19:20", "19:20 - 19:30", "19:30 - 19:40", "19:40 - 19:50", "19:50 - 20:00"]  // Example timeslots for Activity 2
+            // Add more activities and their corresponding timeslots as needed
+        };
+
+        // Get booked or arrived timeslots for the selected activity from server
+        fetch('/get_booked_timeslots?activity=' + encodeURIComponent(activity))
+            .then(response => response.json())
+            .then(data => {
+                // Remove booked or arrived timeslots from timeslots list
+                timeslots[activity] = timeslots[activity].filter(timeslot => !data.includes(timeslot));
+
+                // Populate timeslots for the selected activity
+                timeslots[activity].forEach(function (timeslot) {
+                    var option = document.createElement("option");
+                    option.text = timeslot;
+                    option.value = timeslot;
+                    timeslotSelect.appendChild(option);
+                });
+            });
+    }
+
+    // Populate timeslots initially and whenever activity selection changes
+    document.getElementById("activity").addEventListener("change", populateTimeslots);
+    populateTimeslots(); // Populate initially
+</script>
+    <script>
+        fetch('/get_bookings')
+            .then(response => response.json())
+            .then(data => {
+                var tableBody = document.getElementById('bookingsTableBody');
+                data.forEach(function (booking) {
+                    var row = tableBody.insertRow(0);
+                    row.insertCell(0).innerHTML = booking.name;
+                    row.insertCell(1).innerHtml = booking.ph_desc;
+                    row.insertCell(2).innerHTML = booking.activity;
+                    row.insertCell(3).innerHTML = booking.timeslot;
+                    row.insertCell(4).innerHTML = booking.status;
+                });
+            });
+    </script>
+
+    <script>
+    function onScanSuccess(decodedText, decodedResult) {
+  // handle the scanned code as you like, for example:
+  console.log(`Code matched = ${decodedText}`, decodedResult);
+  document.getElementById('qr_code').value = decodedText;
+}
+
+function onScanFailure(error) {
+  // handle scan failure, usually better to ignore and keep scanning.
+  // for example:
+  console.warn(`Code scan error = ${error}`);
+}
+
+let html5QrcodeScanner = new Html5QrcodeScanner(
+  "reader",
+  { fps: 10, qrbox: {width: 250, height: 250} },
+  /* verbose= */ false);
+html5QrcodeScanner.render(onScanSuccess, onScanFailure);</script>
+
+</body>
+</html>
