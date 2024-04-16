@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Time Slot Tracker</title>
+<title>Instructor Interface (Kampfjet)</title>
 <style>
   body {
     margin: 0;
@@ -180,8 +180,8 @@
   // Update timer every second
   setInterval(() => {
     updateTimer();
-    // Fetch data every minute to update the name and status
-    if (new Date().getSeconds() === 0) {
+    // Fetch data every 10 seconds to update the name and status
+    if (new Date().getSeconds() % 10 === 0) {
       fetchDataRN();
       fetchDataLT();
     }
