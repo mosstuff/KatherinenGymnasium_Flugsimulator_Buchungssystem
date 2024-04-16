@@ -174,6 +174,16 @@ def get_bookings():
         bookings = [{'name': row[0], 'ph_desc': row[1], 'activity': row[2], 'timeslot': row[3], 'status': row[4]} for row in c.fetchall()]
         return jsonify(bookings)
 
+@app.route('/remove_booking', methods=['DELETE'])
+def remove_booking():
+    booking_name = request.args.get('name')
+    with sqlite3.connect('booking.db') as conn:
+        c = conn.cursor()
+        c.execute("DELETE FROM bookings WHERE name = ?", (booking_name,))
+        conn.commit()
+        return '', 204  # No content response for successful deletion
+
+
 @app.route('/instascan.min.js')
 def instascan():
     return send_file('./templates/instascan.min.js')
