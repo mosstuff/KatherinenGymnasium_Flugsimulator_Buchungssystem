@@ -234,7 +234,7 @@ def info():
  #       c.execute("SELECT timeslot FROM bookings WHERE status != 'Booked' AND timeslot >= ? ORDER BY timeslot ASC LIMIT 4", (current_time,))
   #      future_timeslots = [row[0] for row in c.fetchall()]
 #
- #   return render_template('info.html', next_timeslots=next_timeslots, future_timeslots=future_timeslots)
-    return 'ToDo'
+    return render_template('info.html')
+    #return 'ToDo'
 if __name__ == '__main__':
     app.run(debug=True,host="192.168.178.79",ssl_context='adhoc')

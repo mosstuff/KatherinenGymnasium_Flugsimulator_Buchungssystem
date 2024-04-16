@@ -2,57 +2,161 @@
 <html>
 <head>
     <title>Info</title>
-    <style>
-        /* CSS styles */
-        body {
-            background-color: #f0f0f0; /* Default background color */
-        }
-        .timeslot-list {
-            list-style-type: none; /* Remove dots from list items */
-            padding: 0;
-        }
-        .timeslot-list li {
-            margin-bottom: 5px;
-        }
-        .next-timeslot {
-            background-color: #ffff99; /* Background color for the next timeslot */
-            color: #000; /* Text color for the next timeslot */
-            font-weight: bold;
-            font-size: 20px;
-            padding: 10px;
-            border-radius: 5px;
-        }
-    </style>
 </head>
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+.timeslot-container {
+    display: flex;
+    height: 90vh;
+   }
+.headline {
+    display: flex;
+    height: 10vh;
+    background-color: #303446;
+    transition: background-color 0.5s ease;
+    justify-content: center;
+    align-items: center;
+   }
+.Kampfjet {
+    background-color: #303446; /* Default background color */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    transition: background-color 0.5s ease;
+  }
+.Propeller {
+    background-color: #303446; /* Default background color */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    transition: background-color 0.5s ease;
+  }
+.headings {
+    font-size: 60px;
+    color: #C6D0F5; /* Default text color */
+    transition: color 0.5s ease;
+    text-decoration: underline;
+  }
+.mainheading {
+    font-size: 60px;
+    color: #C6D0F5; /* Default text color */
+    transition: color 0.5s ease;
+    text-decoration: underline;
+  }
+#timeslot1 {
+    font-size: 80px;
+    color: #C6D0F5; /* Default text color */
+    transition: color 0.5s ease;
+  }
+#timeslot2 {
+    font-size: 60px;
+    color: #838BA7; /* Default text color */
+    transition: color 0.5s ease;
+  }
+#timeslot21 {
+    font-size: 80px;
+    color: #C6D0F5; /* Default text color */
+    transition: color 0.5s ease;
+  }
+#timeslot22 {
+    font-size: 60px;
+    color: #838BA7; /* Default text color */
+    transition: color 0.5s ease;
+  }
+.break {
+    flex-basis: 100%;
+    height: 0px; /* Specify a height for the break elements */
+}
+
+</style>
 <body>
-    <h1>Next Available Timeslot</h1>
+    <div class="headline">
+        <h1 class="mainheading">Nächste Freie Zeitslots</h1>
+    </div>
+<div class="timeslot-container">
+    <div class="Kampfjet">
+        <p class="headings">Propeller</p><div class="break"></div><div class="break"></div>
+        <p id="timeslot1"></p><div class="break"></div>
+        <p id="timeslot2"></p><div class="break"></div>
+    </div>
+    <div class="Propeller">
+        <p class="headings">Kampfjet</p><div class="break"></div><div class="break"></div>
+        <p id="timeslot21"></p><div class="break"></div>
+        <p id="timeslot22"></p><div class="break"></div>
+    </div>
+</div>
 
-    <!-- Next Timeslot Display -->
-    <ul class="timeslot-list" id="nextTimeslot">
-        <!-- Next available timeslot will be dynamically populated here -->
-    </ul>
+<script>
+    // Function to populate timeslots based on selected activity
+function populateTimeslots1() {
+    var activity = "Propeller"; // You can change this to another activity if needed
+    var container = document.getElementById("timeslot-container");
 
-    <!-- JavaScript to populate the next available timeslot -->
-    <script>
-        // Function to fetch and display the next available timeslot
-        function populateNextTimeslot() {
-            fetch('/get_next_timeslot')
-                .then(response => response.json())
-                .then(data => {
-                    const nextTimeslot = data[0]; // Get the first (next) available timeslot
-                    const timeslotList = document.getElementById('nextTimeslot');
-                    timeslotList.innerHTML = ""; // Clear existing timeslot
-                    const listItem = document.createElement("li");
-                    listItem.textContent = `Next Available Timeslot: ${nextTimeslot}`;
-                    listItem.classList.add('next-timeslot');
-                    timeslotList.appendChild(listItem);
-                });
-        }
+    // Define timeslots based on activity (you can customize this based on your actual timeslots)
+    var timeslots = {
+        "Kampfjet": ["17:00 - 17:10", "17:10 - 17:20", "17:20 - 17:30", "17:30 - 17:40", "17:40 - 17:50", "17:50 - 18:00", "18:00 - 18:10", "18:10 - 18:20", "18:20 - 18:30", "18:30 - 18:40", "18:40 - 18:50", "18:50 - 19:00", "19:00 - 19:10", "19:10 - 19:20", "19:20 - 19:30", "19:30 - 19:40", "19:40 - 19:50", "19:50 - 20:00"], // Example timeslots for Activity 1
+        "Propeller": ["17:00 - 17:10", "17:10 - 17:20", "17:20 - 17:30", "17:30 - 17:40", "17:40 - 17:50", "17:50 - 18:00", "18:00 - 18:10", "18:10 - 18:20", "18:20 - 18:30", "18:30 - 18:40", "18:40 - 18:50", "18:50 - 19:00", "19:00 - 19:10", "19:10 - 19:20", "19:20 - 19:30", "19:30 - 19:40", "19:40 - 19:50", "19:50 - 20:00"]  // Example timeslots for Activity 2
+        // Add more activities and their corresponding timeslots as needed
+    };
 
-        // Populate the next available timeslot initially
-        populateNextTimeslot();
-        // Refresh the next available timeslot every 15 seconds
-        setInterval(populateNextTimeslot, 15000);
-    </script>
+    // Get booked or arrived timeslots for the selected activity from server
+    fetch('/get_booked_timeslots?activity=' + encodeURIComponent(activity))
+        .then(response => response.json())
+        .then(data => {
+            // Filter out booked or arrived timeslots
+            var availableTimeslots = timeslots[activity].filter(timeslot => !data.includes(timeslot));
+
+            // Populate timeslots for the selected activity
+            for (let i = 0; i < Math.min(2, availableTimeslots.length); i++) {
+                var p = document.getElementById("timeslot" + (i + 1));
+                if (p) {
+                    p.textContent = availableTimeslots[i];
+                }
+            }
+        });
+    setTimeout(populateTimeslots1, 10000)
+};
+function populateTimeslots2() {
+    var activity = "Kampfjet"; // You can change this to another activity if needed
+    var container = document.getElementById("timeslot-container");
+
+    // Define timeslots based on activity (you can customize this based on your actual timeslots)
+    var timeslots = {
+        "Kampfjet": ["17:00 - 17:10", "17:10 - 17:20", "17:20 - 17:30", "17:30 - 17:40", "17:40 - 17:50", "17:50 - 18:00", "18:00 - 18:10", "18:10 - 18:20", "18:20 - 18:30", "18:30 - 18:40", "18:40 - 18:50", "18:50 - 19:00", "19:00 - 19:10", "19:10 - 19:20", "19:20 - 19:30", "19:30 - 19:40", "19:40 - 19:50", "19:50 - 20:00"], // Example timeslots for Activity 1
+        "Propeller": ["17:00 - 17:10", "17:10 - 17:20", "17:20 - 17:30", "17:30 - 17:40", "17:40 - 17:50", "17:50 - 18:00", "18:00 - 18:10", "18:10 - 18:20", "18:20 - 18:30", "18:30 - 18:40", "18:40 - 18:50", "18:50 - 19:00", "19:00 - 19:10", "19:10 - 19:20", "19:20 - 19:30", "19:30 - 19:40", "19:40 - 19:50", "19:50 - 20:00"]  // Example timeslots for Activity 2
+        // Add more activities and their corresponding timeslots as needed
+    };
+
+    // Get booked or arrived timeslots for the selected activity from server
+    fetch('/get_booked_timeslots?activity=' + encodeURIComponent(activity))
+        .then(response => response.json())
+        .then(data => {
+            // Filter out booked or arrived timeslots
+            var availableTimeslots = timeslots[activity].filter(timeslot => !data.includes(timeslot));
+
+            // Populate timeslots for the selected activity
+            for (let i = 0; i < Math.min(2, availableTimeslots.length); i++) {
+                var p = document.getElementById("timeslot2" + (i + 1));
+                if (p) {
+                    p.textContent = availableTimeslots[i];
+                }
+            }
+        });
+    setTimeout(populateTimeslots2, 10000)
+};
+populateTimeslots1(); // Populate initially
+populateTimeslots2(); // Populate initially
+
+
+
+</script>
 </body>
 </html>
