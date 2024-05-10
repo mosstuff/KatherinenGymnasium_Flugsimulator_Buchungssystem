@@ -235,7 +235,7 @@ def remove_booking():
     booking_name = request.args.get('name')
     with sqlite3.connect('booking.db') as conn:
         c = conn.cursor()
-        c.execute("DELETE FROM bookings WHERE name = ?", (booking_name,))
+        c.execute("DELETE FROM bookings WHERE qr_code = ?", (booking_name,))
         conn.commit()
         return '', 204  # No content response for successful deletion
 
