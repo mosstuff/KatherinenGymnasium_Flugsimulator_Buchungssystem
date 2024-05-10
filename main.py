@@ -314,6 +314,10 @@ def arrive_booking():
         conn.commit()
         return '', 204  # No content response for successful deletion
 
+@app.route('/qr.js')
+def qrjs():
+    return send_file('./templates/html5-qrcode.min.js')
+
 @app.route('/info')
 def info():
     return render_template('info.html')
