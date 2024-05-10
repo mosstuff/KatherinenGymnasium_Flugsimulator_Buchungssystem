@@ -75,6 +75,7 @@
         const qrCodeSuccessCallback = (decodedText, decodedResult) => {
             console.log(`Code matched = ${decodedText}`, decodedResult);
             document.getElementById('qr_code').value = decodedText;
+html5QrCode.stop();
             document.getElementById('checkinForm').submit();
         };
         const config = { fps: 10, qrbox: { width: 250, height: 250 } };
