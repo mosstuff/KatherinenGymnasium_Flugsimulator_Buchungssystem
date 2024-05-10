@@ -204,6 +204,10 @@ def clockpng():
 def crosspng():
     return send_file('./templates/cross.png')
 
+@app.route('/checkin/reset')
+def checkin_reset():
+    return redirect(url_for('checkin'))
+
 @app.route('/checkin', methods=['GET', 'POST'])
 def checkin():
     if request.method == 'POST':
