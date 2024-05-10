@@ -214,6 +214,8 @@ def checkin():
             c = conn.cursor()
             c.execute("SELECT timeslot FROM bookings WHERE qr_code = ? AND status = 'Booked'", (qr_code,))
             row = c.fetchone()
+            c.execute("SELECT activity FROM bookings WHERE qr_code = ? AND status = 'Booked'", (qr_code,))
+            act = c.fetchone()
 
             if row:
                 timeslot = row[0]
@@ -223,7 +225,12 @@ def checkin():
                 if timeslot_start <= current_time <= timeslot_end:
                     c.execute("UPDATE bookings SET status = 'Arrived' WHERE qr_code = ?", (qr_code,))
                     conn.commit()
-                    return render_template('checkin_ok.html')
+                    if act:
+                        activity = act[0]
+                        if activity == 'Kampfjet':
+                            return render_template('chekin_ok_kj.html')
+                        else:
+                            return render_template('checkin_ok_pf.html')
                 else:
                     return render_template('checkin_wait.html')
             else:
@@ -234,17 +241,6 @@ def checkin():
 
 @app.route('/info')
 def info():
-    #current_time = datetime.datetime.now().strftime("%H:%M")
-#
- #   with sqlite3.connect('booking.db') as conn:
-  #      c = conn.cursor()
-   #     c.execute("SELECT timeslot FROM bookings WHERE status = 'Booked' AND timeslot >= ? ORDER BY timeslot ASC LIMIT 4", (current_time,))
-    #    next_timeslots = [row[0] for row in c.fetchall()]
-#
- #       c.execute("SELECT timeslot FROM bookings WHERE status != 'Booked' AND timeslot >= ? ORDER BY timeslot ASC LIMIT 4", (current_time,))
-  #      future_timeslots = [row[0] for row in c.fetchall()]
-#
     return render_template('info.html')
-    #return 'ToDo'
 if __name__ == '__main__':
     app.run(debug=True,host="192.168.178.79",ssl_context='adhoc')
