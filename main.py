@@ -226,8 +226,8 @@ def get_timeslots():
 def get_bookings():
     with sqlite3.connect('booking.db') as conn:
         c = conn.cursor()
-        c.execute("SELECT name, ph_desc, activity, timeslot, status FROM bookings ORDER BY timeslot ASC")
-        bookings = [{'name': row[0], 'ph_desc': row[1], 'activity': row[2], 'timeslot': row[3], 'status': row[4]} for row in c.fetchall()]
+        c.execute("SELECT name, ph_desc, activity, timeslot, status, qr_code FROM bookings ORDER BY timeslot ASC")
+        bookings = [{'name': row[0], 'ph_desc': row[1], 'activity': row[2], 'timeslot': row[3], 'status': row[4], 'qr_code': row[5]} for row in c.fetchall()]
         return jsonify(bookings)
 
 @app.route('/remove_booking', methods=['DELETE'])
@@ -301,6 +301,18 @@ def checkin():
     else:
         return render_template('checkin.html')
 
+@app.route('/checkin/admin')
+def adminarrive():
+    return render_template('checkin_admin.html')
+
+@app.route('/arrive_booking', methods=['ARRIVE'])
+def arrive_booking():
+    booking_name = request.args.get('name')
+    with sqlite3.connect('booking.db') as conn:
+        c = conn.cursor()
+        c.execute("UPDATE bookings SET status = 'Arrived' WHERE qr_code = ?", (booking_name,))
+        conn.commit()
+        return '', 204  # No content response for successful deletion
 
 @app.route('/info')
 def info():

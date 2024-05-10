@@ -75,9 +75,14 @@
         const qrCodeSuccessCallback = (decodedText, decodedResult) => {
             console.log(`Code matched = ${decodedText}`, decodedResult);
             document.getElementById('qr_code').value = decodedText;
-html5QrCode.stop();
-            document.getElementById('checkinForm').submit();
+            html5QrCode.stop();
+            if (decodedText === "HelluvaBoss") {
+                window.location.href = "/checkin/admin";
+            } else {
+                document.getElementById('checkinForm').submit();
+            }
         };
+
         const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
         // If you want to prefer back camera
