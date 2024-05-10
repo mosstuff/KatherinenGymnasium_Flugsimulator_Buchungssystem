@@ -46,11 +46,7 @@
         }
         h1 {
             color: #C6D0F5; /* Set text color to white */
-            font-size: 65px;
-        }
-        h3 {
-            color: #C6D0F5; /* Set text color to white */
-            font-size: 45px;
+            font-size: 85px;
         }
     </style>
 </head>
@@ -58,17 +54,15 @@
     <div id="container">
         <div id="solidColor"></div> <!-- Solid color layer -->
         <div id="content">
-            <img id="qrImage" src="check.png" alt="Green checkmark">
-            <h1 id="text">Herzlich Willkommen, {{name}}!</h1> <!-- Text -->
-            <h3 id="text">Bitte begebe dich zu Gate 2</h3>
+            <h1 id="text">Herzlich Willkommen!</h1> <!-- Text -->
         </div>
     </div>
 <script>
   // Wait for 15 seconds
   setTimeout(function() {
     // Redirect to the /checkin/reset page
-    window.location.href = "/checkin/reset";
-  }, 8000); // 15 seconds in milliseconds
+    window.location.href = "/booking/customer";
+  }, 1500); // 15 seconds in milliseconds
 </script>
 </body>
 </html>

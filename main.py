@@ -112,25 +112,81 @@ def get_next_next_time_slot():
         else:
             return jsonify('None')
 
+@app.route('/booking2', methods=['GET', 'Post'])
+def booking2():
+    if request.method == 'POST':
+        name = request.args.get('name')
+        ph_desc = request.args.get('ph_desc')
+        activity = request.args.get('activity')
+        slot = request.args.get('slot')
+        qr = request.args.get('qr')
+
+        if name:
+            print('hi')
+
+
+
 @app.route('/booking', methods=['GET', 'POST'])
 def booking():
+    global booking_state
+    global activity_form
+    global timeslot_form
+    if booking_state == None:
+        booking_state = 0
     if request.method == 'POST':
-        with sqlite3.connect('booking.db') as conn:
-            name = request.form['name']
-            ph_desc = request.form['ph_desc']
-            activity = request.form['activity']
-            timeslot = request.form['timeslot']
-            qr_code = request.form['qr_code']
-            status = "Booked"
+        type = request.args.get('s')
+        if type == '0':
+            with sqlite3.connect('booking.db') as conn:
+                name = request.form['name']
+                ph_desc = request.form['ph_desc']
+                activity_form = request.form['activity']
+                timeslot_form = request.form['timeslot']
+                qr_code = request.form['qr_code']
+                status = "Booked"
 
-            c = conn.cursor()
-            c.execute("INSERT INTO bookings (name, ph_desc, activity, timeslot, qr_code, status) VALUES (?, ?, ?, ?, ?, ?)",
-                      (name, ph_desc, activity, timeslot, qr_code, status))
-            conn.commit()
+                c = conn.cursor()
+                c.execute("INSERT INTO bookings (name, ph_desc, activity, timeslot, qr_code, status) VALUES (?, ?, ?, ?, ?, ?)",
+                          (name, ph_desc, activity_form, timeslot_form, qr_code, status))
+                conn.commit()
+                booking_state = 1
 
-        return redirect(url_for('booking'))
+            return redirect(url_for('booking'))
+        elif type == '1':
+            booking_state = 2
+            return redirect(url_for('booking'))
+        elif type == '2':
+            booking_state = 0
+            return redirect(url_for('booking'))
+        elif type == '3':
+            booking_state = 3
+            return redirect(url_for('booking'))
     else:
-        return render_template('booking.html')
+        if booking_state == 0:
+            return render_template('booking.html')
+        elif booking_state == 1:
+            return render_template('booking_overw.html')
+        elif booking_state == 2:
+            return render_template('booking_pay.html')
+        elif booking_state == 3:
+            return render_template('booking_pay_gt.html')
+        else:
+            return '500 Server Error'
+
+@app.route('/booking/customer')
+def booking_pd():
+    global booking_state
+    global activity_form
+    global timeslot_form
+    if booking_state == 0:
+        return render_template('custompayinit.html')
+    elif booking_state == 1:
+        return render_template('custompayoverw.html', activity=activity_form, slot=timeslot_form)
+    elif booking_state == 2:
+        return render_template('custompayprice.html')
+    elif booking_state == 3:
+        return render_template('custompayprice_gt.html')
+    else:
+        return '500 Internal error'
 
 @app.route('/get_booked_timeslots')
 def get_booked_timeslots():
@@ -220,7 +276,10 @@ def checkin():
             row = c.fetchone()
             c.execute("SELECT activity FROM bookings WHERE qr_code = ? AND status = 'Booked'", (qr_code,))
             act = c.fetchone()
-
+            c.execute("SELECT name FROM bookings WHERE qr_code = ? AND status = 'Booked'", (qr_code,))
+            nam = c.fetchone()
+            if nam:
+                name = nam[0]
             if row:
                 timeslot = row[0]
                 timeslot_start = timeslot.split('-')[0].strip()
@@ -232,11 +291,11 @@ def checkin():
                     if act:
                         activity = act[0]
                         if activity == 'Kampfjet':
-                            return render_template('chekin_ok_kj.html')
+                            return render_template('chekin_ok_kj.html', name=name)
                         else:
-                            return render_template('checkin_ok_pf.html')
+                            return render_template('checkin_ok_pf.html', name=name)
                 else:
-                    return render_template('checkin_wait.html')
+                    return render_template('checkin_wait.html', timeslot=timeslot)
             else:
                 return render_template('checkin_error.html')
     else:
@@ -247,4 +306,5 @@ def checkin():
 def info():
     return render_template('info.html')
 if __name__ == '__main__':
+    booking_state = 0
     app.run(debug=True,host="192.168.178.79",ssl_context='adhoc')
