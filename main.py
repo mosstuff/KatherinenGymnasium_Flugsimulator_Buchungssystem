@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify, s
 import sqlite3
 import os
 import datetime
+from waitress import serve
 
 app = Flask(__name__)
 
@@ -256,6 +257,10 @@ def checkpng():
 def clockpng():
     return send_file('./templates/clock.png')
 
+@app.route('/logm.png')
+def logm():
+    return send_file('./templates/logm.png')
+
 @app.route('/cross.png')
 def crosspng():
     return send_file('./templates/cross.png')
@@ -327,4 +332,4 @@ def info():
     return render_template('info.html')
 if __name__ == '__main__':
     booking_state = 0
-    app.run(debug=True)
+    serve(app, listen='*:5000')

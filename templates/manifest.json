@@ -5,10 +5,10 @@
   "name": "KaFluSiCh",
   "orientation": "any",
   "scope": "/",
-  "short_name": "KaFluSiCh",
-  "start_url": "https://sweeping-modest-cicada.ngrok-free.app",
+  "short_name": "Flugsim Checkin",
+  "start_url": "https://192.168.178.36/checkin",
   "theme_color": "#ffffff",
-  "id": "de.mosstuff.kaflusich",
+  "id": "de.mosstuff.kaflusich2",
   "description": "Katherl Flugsimulator Checkin",
   "lang": "de",
   "display_override": [
@@ -20,7 +20,7 @@
   ],
   "icons": [
     {
-        "src": "https://static.mosstuff.de/logw.png",
+        "src": "https://192.168.178.36/logm.png",
         "sizes": "720x720",
         "type": "image/png",
         "purpose": "any"
