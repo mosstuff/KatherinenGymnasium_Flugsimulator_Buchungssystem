@@ -264,6 +264,10 @@ def crosspng():
 def checkin_reset():
     return redirect(url_for('checkin'))
 
+@app.route('/manifest.json')
+def manifest_pwa():
+    return send_file('./templates/manifest.json')
+
 @app.route('/checkin', methods=['GET', 'POST'])
 def checkin():
     if request.method == 'POST':
@@ -291,7 +295,7 @@ def checkin():
                     if act:
                         activity = act[0]
                         if activity == 'Kampfjet':
-                            return render_template('chekin_ok_kj.html', name=name)
+                            return render_template('checkin_ok_kj.html', name=name)
                         else:
                             return render_template('checkin_ok_pf.html', name=name)
                 else:
@@ -323,4 +327,4 @@ def info():
     return render_template('info.html')
 if __name__ == '__main__':
     booking_state = 0
-    app.run(debug=True,host="192.168.178.79",ssl_context='adhoc')
+    app.run(debug=True)

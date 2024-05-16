@@ -1,0 +1,30 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "fullscreen",
+  "name": "KaFluSiCh",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "KaFluSiCh",
+  "start_url": "https://sweeping-modest-cicada.ngrok-free.app",
+  "theme_color": "#ffffff",
+  "id": "de.mosstuff.kaflusich",
+  "description": "Katherl Flugsimulator Checkin",
+  "lang": "de",
+  "display_override": [
+    "fullscreen",
+    "standalone",
+    "minimal-ui",
+    "browser",
+    "window-controls-overlay"
+  ],
+  "icons": [
+    {
+        "src": "https://static.mosstuff.de/logw.png",
+        "sizes": "720x720",
+        "type": "image/png",
+        "purpose": "any"
+    }
+  ]
+
+}
