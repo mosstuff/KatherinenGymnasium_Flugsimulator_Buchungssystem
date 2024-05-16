@@ -257,9 +257,13 @@ def checkpng():
 def clockpng():
     return send_file('./templates/clock.png')
 
-@app.route('/logm.png')
+@app.route('/sw.json')
+def swjson():
+    return send_file('./templates/sw.json')
+
+@app.route('/logom.png')
 def logm():
-    return send_file('./templates/logm.png')
+    return send_file('./templates/logom.png')
 
 @app.route('/cross.png')
 def crosspng():
