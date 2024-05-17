@@ -259,6 +259,10 @@ def qrpng():
 def checkpng():
     return send_file('./templates/check.png')
 
+@app.route('/kamap.jpg')
+def kmap():
+    return send_file('./templates/kamap.jpg')
+
 @app.route('/clock.png')
 def clockpng():
     return send_file('./templates/clock.png')

@@ -8,7 +8,7 @@
   "short_name": "Flugsim Checkin",
   "start_url": "https://192.168.178.36/checkin",
   "theme_color": "#ffffff",
-  "id": "de.mosstuff.kaflusich2",
+  "id": "de.mosstuff.kaflusich",
   "description": "Katherl Flugsimulator Checkin",
   "lang": "de",
   "display_override": [
