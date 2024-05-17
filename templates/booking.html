@@ -26,6 +26,13 @@
             <option value="Kampfjet">Kampfjet</option>
             <option value="Propeller">Propeller</option>
         </select><br>
+        <label for="subactivity">Route:</label><br>
+        <select id="subactivity" name="subactivity">
+            <option value="1">Route 1</option>
+            <option value="2">Route 2</option>
+            <option value="3">Route 3</option>
+            <option value="Freiflug">Freiflug</option>
+        </select><br>
         <label for="timeslot">Timeslot:</label><br>
         <select id="timeslot" name="timeslot">
             <!-- Timeslot options will be populated dynamically using JavaScript -->
@@ -43,6 +50,7 @@
                 <th>Name</th>
                 <th>Description</th>
                 <th>Activity</th>
+                <th>Route</th>
                 <th>Timeslot</th>
                 <th>Status</th>
                 <th>Action</th>
@@ -103,8 +111,9 @@
                         row.insertCell(0).innerHTML = booking.name;
                         row.insertCell(1).innerHTML = booking.ph_desc;
                         row.insertCell(2).innerHTML = booking.activity;
-                        row.insertCell(3).innerHTML = booking.timeslot;
-                        row.insertCell(4).innerHTML = booking.status;
+                        row.insertCell(3).innerHTML = booking.subactivity;
+                        row.insertCell(4).innerHTML = booking.timeslot;
+                        row.insertCell(5).innerHTML = booking.status;
                         var removeButtonCell = row.insertCell();
                         var removeButton = document.createElement("button");
                         removeButton.textContent = "Remove";

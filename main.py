@@ -11,7 +11,7 @@ def initialize_database():
     with sqlite3.connect('booking.db') as conn:
         c = conn.cursor()
         c.execute('''CREATE TABLE IF NOT EXISTS bookings
-                     (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, ph_desc TEXT, activity TEXT, timeslot TEXT, qr_code TEXT, status TEXT)''')
+                     (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, ph_desc TEXT, activity TEXT, timeslot TEXT, qr_code TEXT, status TEXT, subactivity TEXT)''')
         conn.commit()
 
 # Check if the database file exists, if not, create the database
@@ -29,7 +29,10 @@ def get_next_10_minute_range():
     next_time10 = current_time.replace(hour=current_hour, minute=next_10_minutes, second=0, microsecond=0)
 
     next_20_minutes = (current_time.minute // 10 + 1) * 10 + 10
-    if next_20_minutes >= 60:
+    if next_20_minutes > 60:
+        next_20_minutes -= 60
+
+    elif next_20_minutes == 60:
         next_20_minutes -= 60
         current_hour += 1
     next_time20 = current_time.replace(hour=current_hour, minute=next_20_minutes, second=0, microsecond=0)
@@ -89,10 +92,10 @@ def get_next_time_slot():
     # Get the next available time slot for the selected activity
     with sqlite3.connect('booking.db') as conn:
         c = conn.cursor()
-        c.execute("SELECT name, status, ph_desc  FROM bookings WHERE activity = ? AND timeslot = ?", (activity, next_time))
+        c.execute("SELECT name, status, ph_desc, subactivity FROM bookings WHERE activity = ? AND timeslot = ?", (activity, next_time))
         row = c.fetchone()
         if row:
-            return jsonify({'name': row[0], 'status': row[1], 'ph_desc': row[2]})
+            return jsonify({'name': row[0], 'status': row[1], 'ph_desc': row[2], 'sub': row[3]})
         else:
             return jsonify('None')
 
@@ -106,10 +109,10 @@ def get_next_next_time_slot():
     # Get the next available time slot for the selected activity
     with sqlite3.connect('booking.db') as conn:
         c = conn.cursor()
-        c.execute("SELECT name, status, ph_desc  FROM bookings WHERE activity = ? AND timeslot = ?", (activity, next_time))
+        c.execute("SELECT name, status, ph_desc, subactivity FROM bookings WHERE activity = ? AND timeslot = ?", (activity, next_time))
         row = c.fetchone()
         if row:
-            return jsonify({'name': row[0], 'status': row[1], 'ph_desc': row[2]})
+            return jsonify({'name': row[0], 'status': row[1], 'ph_desc': row[2], 'sub': row[3]})
         else:
             return jsonify('None')
 
@@ -132,6 +135,7 @@ def booking():
     global booking_state
     global activity_form
     global timeslot_form
+    global subactivity_form
     if booking_state == None:
         booking_state = 0
     if request.method == 'POST':
@@ -141,13 +145,14 @@ def booking():
                 name = request.form['name']
                 ph_desc = request.form['ph_desc']
                 activity_form = request.form['activity']
+                subactivity_form = request.form['subactivity']
                 timeslot_form = request.form['timeslot']
                 qr_code = request.form['qr_code']
                 status = "Booked"
 
                 c = conn.cursor()
-                c.execute("INSERT INTO bookings (name, ph_desc, activity, timeslot, qr_code, status) VALUES (?, ?, ?, ?, ?, ?)",
-                          (name, ph_desc, activity_form, timeslot_form, qr_code, status))
+                c.execute("INSERT INTO bookings (name, ph_desc, activity, timeslot, qr_code, status, subactivity) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                          (name, ph_desc, activity_form, timeslot_form, qr_code, status, subactivity_form))
                 conn.commit()
                 booking_state = 1
 
@@ -178,10 +183,11 @@ def booking_pd():
     global booking_state
     global activity_form
     global timeslot_form
+    global subactivity_form
     if booking_state == 0:
         return render_template('custompayinit.html')
     elif booking_state == 1:
-        return render_template('custompayoverw.html', activity=activity_form, slot=timeslot_form)
+        return render_template('custompayoverw.html', activity=activity_form, slot=timeslot_form, sub=subactivity_form)
     elif booking_state == 2:
         return render_template('custompayprice.html')
     elif booking_state == 3:
@@ -227,8 +233,8 @@ def get_timeslots():
 def get_bookings():
     with sqlite3.connect('booking.db') as conn:
         c = conn.cursor()
-        c.execute("SELECT name, ph_desc, activity, timeslot, status, qr_code FROM bookings ORDER BY timeslot ASC")
-        bookings = [{'name': row[0], 'ph_desc': row[1], 'activity': row[2], 'timeslot': row[3], 'status': row[4], 'qr_code': row[5]} for row in c.fetchall()]
+        c.execute("SELECT name, ph_desc, activity, timeslot, status, qr_code, subactivity FROM bookings ORDER BY timeslot ASC")
+        bookings = [{'name': row[0], 'ph_desc': row[1], 'activity': row[2], 'timeslot': row[3], 'status': row[4], 'qr_code': row[5], 'subactivity': row[6]} for row in c.fetchall()]
         return jsonify(bookings)
 
 @app.route('/remove_booking', methods=['DELETE'])
@@ -336,4 +342,5 @@ def info():
     return render_template('info.html')
 if __name__ == '__main__':
     booking_state = 0
+    #app.run(debug=True)
     serve(app, listen='*:5000')

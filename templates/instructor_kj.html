@@ -69,16 +69,16 @@
     font-size: 50px;
     color: #4C4F69; /* Default text color */
     transition: color 0.5s ease;
+  }
 .break {
   flex-basis: 100%;
-  height: 0.1;
+  height: 0;
 }
-
 </style>
 </head>
 <body>
 <div class="container">
-  <div class="containercontainer"><div class="top-half_1" id="nameContainer"><div class="break"></div><div id="name"></div><div class="break"></div><div id="desc"></div></div><div class="top-half_2" id="fnameContainer"><div class="break"></div><div id="namel"></div><div class="break"></div><div id="descl"></div></div></div>
+  <div class="containercontainer"><div class="top-half_1" id="nameContainer"><div class="break"></div><div id="name"></div><div class="break"></div><div id="desc"></div><div class="break"></div><div id="route"></div></div><div class="top-half_2" id="fnameContainer"><div class="break"></div><div id="namel"></div><div class="break"></div><div id="descl"></div><div class="break"></div><div id="routel"></div></div></div>
   <div class="bottom-half" id="timerContainer">
     <span id="timer"></span>
     </a>
@@ -97,9 +97,10 @@
       .then(data => {
         // Display name in the top half
         document.getElementById('name').innerText = data.name;
+        document.getElementById('route').innerText = data.sub;
 
         if (data.ph_desc === undefined) {
-          document.getElementById('name').innerText = '';
+          document.getElementById('desc').innerText = '';
         } else {
           document.getElementById('desc').innerText = data.ph_desc;
         }
@@ -127,9 +128,11 @@
       .then(data => {
         // Display name in the top half
         document.getElementById('namel').innerText = data.name;
+        document.getElementById('routel').innerText = data.sub;
+
 
         if (data.ph_desc === undefined) {
-          document.getElementById('namel').innerText = '';
+          document.getElementById('descl').innerText = '';
         } else {
           document.getElementById('descl').innerText = data.ph_desc;
         }

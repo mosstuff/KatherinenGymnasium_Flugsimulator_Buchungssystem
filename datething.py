@@ -12,7 +12,10 @@ def get_next_10_minute_range():
     next_time10 = current_time.replace(hour=current_hour, minute=next_10_minutes, second=0, microsecond=0)
 
     next_20_minutes = (current_time.minute // 10 + 1) * 10 + 10
-    if next_20_minutes >= 60:
+    if next_20_minutes > 60:
+        next_20_minutes -= 60
+
+    elif next_20_minutes == 60:
         next_20_minutes -= 60
         current_hour += 1
     next_time20 = current_time.replace(hour=current_hour, minute=next_20_minutes, second=0, microsecond=0)
@@ -37,6 +40,8 @@ def get_current_10_minute_range():
 
     return final_time
 
+print('nextone')
 print(get_next_10_minute_range())
+print('current')
 print(get_current_10_minute_range())
 
