@@ -303,8 +303,9 @@ def checkin():
                 timeslot = row[0]
                 timeslot_start = timeslot.split('-')[0].strip()
                 timeslot_end = timeslot.split('-')[1].strip()
-
-                if timeslot_start <= current_time <= timeslot_end:
+                current_timeslot = get_current_10_minute_range()
+                next_time_slot = get_next_10_minute_range()
+                if timeslot == current_timeslot or timeslot == next_time_slot:
                     c.execute("UPDATE bookings SET status = 'Arrived' WHERE qr_code = ?", (qr_code,))
                     conn.commit()
                     if act:
