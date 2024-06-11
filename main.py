@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify, s
 import sqlite3
 import os
 import datetime
+import time
 from waitress import serve
 
 app = Flask(__name__)
@@ -166,6 +167,9 @@ def booking():
         elif type == '3':
             booking_state = 3
             return redirect(url_for('booking'))
+        elif type == '4':
+            booking_state = 4
+            return redirect(url_for('booking'))
     else:
         if booking_state == 0:
             return render_template('booking.html')
@@ -174,6 +178,8 @@ def booking():
         elif booking_state == 2:
             return render_template('booking_pay.html')
         elif booking_state == 3:
+            return render_template('booking_pay_gt.html')
+        elif booking_state == 4:
             return render_template('booking_pay_gt.html')
         else:
             return '500 Server Error'
@@ -192,6 +198,8 @@ def booking_pd():
         return render_template('custompayprice.html')
     elif booking_state == 3:
         return render_template('custompayprice_gt.html')
+    elif booking_state == 4:
+        return render_template('custompayprice_do.html')
     else:
         return '500 Internal error'
 
@@ -287,8 +295,13 @@ def checkin_reset():
 def manifest_pwa():
     return send_file('./templates/manifest.json')
 
+
+
 @app.route('/checkin', methods=['GET', 'POST'])
 def checkin():
+    global ch_status
+    if ch_status != 0:
+        ch_status = 0
     if request.method == 'POST':
         qr_code = request.form['qr_code']
         current_time = datetime.datetime.now().strftime("%H:%M")
@@ -315,13 +328,19 @@ def checkin():
                     if act:
                         activity = act[0]
                         if activity == 'Kampfjet':
+                            ch_status = 1
                             return render_template('checkin_ok_kj.html', name=name)
                         else:
+                            ch_status = 1
                             return render_template('checkin_ok_pf.html', name=name)
                 else:
+                    ch_status = 2
                     return render_template('checkin_wait.html', timeslot=timeslot)
             else:
+                ch_status = 2
                 return render_template('checkin_error.html')
+            time.sleep(3)
+            ch_status = 0
     else:
         return render_template('checkin.html')
 
