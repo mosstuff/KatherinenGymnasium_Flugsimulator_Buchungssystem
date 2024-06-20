@@ -300,7 +300,8 @@ def manifest_pwa():
 @app.route('/checkin', methods=['GET', 'POST'])
 def checkin():
     global ch_status
-    if ch_status != 0:
+
+    if ch_status == None:
         ch_status = 0
     if request.method == 'POST':
         qr_code = request.form['qr_code']
@@ -339,10 +340,16 @@ def checkin():
             else:
                 ch_status = 2
                 return render_template('checkin_error.html')
-            time.sleep(3)
-            ch_status = 0
     else:
         return render_template('checkin.html')
+
+@app.route('/checkin/ev3')
+def checkin_ev3():
+    global ch_status
+    ch_status_tmp = ch_status
+    if ch_status != 0:
+        ch_status = 0
+    return str(ch_status_tmp)
 
 @app.route('/checkin/admin')
 def adminarrive():
@@ -366,5 +373,6 @@ def info():
     return render_template('info.html')
 if __name__ == '__main__':
     booking_state = 0
-    #app.run(debug=True)
+    ch_status = 0
+    #app.run(debug=True, ssl_context='adhoc', host='0.0.0.0')
     serve(app, listen='*:5000')
